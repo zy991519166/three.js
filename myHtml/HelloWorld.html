@@ -1,4 +1,4 @@
-<html lang="zh">
+<html lang="zh-CN">
 	<head>
 		<meta charset="utf-8">
 		<title>My first three.js app</title>
@@ -17,20 +17,46 @@
 			document.body.appendChild( renderer.domElement );
 
 			const geometry = new THREE.BoxGeometry();
-			const material = new THREE.MeshLambertMaterial( {  emissive: 0xff0000 } );
+			const material = new THREE.MeshLambertMaterial( {  emissive: 0x880000 } );
+			let myColor = new THREE.Color(Math.random(0,255),Math.random(0,255),Math.random(0,255) );
+
 			const cube = new THREE.Mesh( geometry, material );
 			scene.add( cube );
-
+			const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+			scene.add(directionalLight);
 			camera.position.z = 5;
 
 			const animate = function () {
 				requestAnimationFrame( animate );
+				myColor = new THREE.Color(Math.random(0,1),Math.random(0,1),Math.random(0,255) );
+				material.emissive = myColor;
+
 
 				cube.rotation.x += 0.01;
 				cube.rotation.y += 0.01;
 
+				render();
+				window.addEventListener( 'resize', onWindowResize, false );
+			}
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+				console.log("111");
+
+			}
+
+			//
+
+			function render() {
+
 				renderer.render( scene, camera );
-			};
+
+			}
+
 
 			animate();
 		</script>
