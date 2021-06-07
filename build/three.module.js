@@ -2452,10 +2452,7 @@ class WebGLRenderTarget extends EventDispatcher {
 
 		this.texture = new Texture( undefined, options.mapping, options.wrapS, options.wrapT, options.magFilter, options.minFilter, options.format, options.type, options.anisotropy, options.encoding );
 
-		this.texture.image = {};
-		this.texture.image.width = width;
-		this.texture.image.height = height;
-		this.texture.image.depth = 1;
+		this.texture.image = { width: width, height: height, depth: 1 };
 
 		this.texture.generateMipmaps = options.generateMipmaps !== undefined ? options.generateMipmaps : false;
 		this.texture.minFilter = options.minFilter !== undefined ? options.minFilter : LinearFilter;
@@ -24734,7 +24731,10 @@ function WebGLRenderer( parameters ) {
 
 		if ( _transmissionRenderTarget === null ) {
 
-			_transmissionRenderTarget = new WebGLRenderTarget( 1024, 1024, {
+			const needsAntialias = _antialias === true && capabilities.isWebGL2 === true;
+			const renderTargetType = needsAntialias ? WebGLMultisampleRenderTarget : WebGLRenderTarget;
+
+			_transmissionRenderTarget = new renderTargetType( 1024, 1024, {
 				generateMipmaps: true,
 				minFilter: LinearMipmapLinearFilter,
 				magFilter: NearestFilter,
@@ -24750,6 +24750,7 @@ function WebGLRenderer( parameters ) {
 
 		renderObjects( opaqueObjects, scene, camera );
 
+		textures.updateMultisampleRenderTarget( _transmissionRenderTarget );
 		textures.updateRenderTargetMipmap( _transmissionRenderTarget );
 
 		_this.setRenderTarget( currentRenderTarget );
