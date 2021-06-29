@@ -1,0 +1,64 @@
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<title>Box three.js app</title>
+	<style>
+		body { margin: 0; }
+	</style>
+</head>
+<body>
+<script src="../build/three.js"></script>
+<script>
+	const scene = new THREE.Scene();
+	const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+	const renderer = new THREE.WebGLRenderer();
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	document.body.appendChild( renderer.domElement );
+
+	const geometry = new THREE.SphereGeometry(4,18,12);
+	let myColor = new THREE.Color(Math.random(0,255),Math.random(0,255),Math.random(0,255) );
+	const material = new THREE.MeshLambertMaterial( {  emissive: myColor ,wireframe: true} );
+
+	const cube = new THREE.Mesh( geometry, material );
+	scene.add( cube );
+	const directionalLight = new THREE.DirectionalLight( 0x888888, 0.5 );
+	scene.add(directionalLight);
+	camera.position.z = 15;
+
+	const animate = function () {
+		requestAnimationFrame( animate );
+		// myColor = new THREE.Color(Math.random(0,1),Math.random(0,1),Math.random(0,1) );
+		// material.emissive = myColor;
+
+
+		cube.rotation.x += 0.01;
+		cube.rotation.y += 0.01;
+
+		render();
+		window.addEventListener( 'resize', onWindowResize, false );
+	}
+	function onWindowResize() {
+
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+
+		renderer.setSize( window.innerWidth, window.innerHeight );
+
+		console.log("111");
+
+	}
+
+	//
+
+	function render() {
+
+		renderer.render( scene, camera );
+
+	}
+
+
+	animate();
+</script>
+</body>
+</html>

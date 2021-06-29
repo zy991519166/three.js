@@ -17,19 +17,19 @@
 			document.body.appendChild( renderer.domElement );
 
 			const geometry = new THREE.BoxGeometry();
-			const material = new THREE.MeshLambertMaterial( {  emissive: 0x880000 } );
 			let myColor = new THREE.Color(Math.random(0,255),Math.random(0,255),Math.random(0,255) );
+			const material = new THREE.MeshLambertMaterial( {  emissive: myColor } );
 
 			const cube = new THREE.Mesh( geometry, material );
 			scene.add( cube );
-			const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+			const directionalLight = new THREE.DirectionalLight( 0x888888, 0.5 );
 			scene.add(directionalLight);
 			camera.position.z = 5;
 
 			const animate = function () {
 				requestAnimationFrame( animate );
-				myColor = new THREE.Color(Math.random(0,1),Math.random(0,1),Math.random(0,255) );
-				material.emissive = myColor;
+				// myColor = new THREE.Color(Math.random(0,1),Math.random(0,1),Math.random(0,1) );
+				// material.emissive = myColor;
 
 
 				cube.rotation.x += 0.01;
