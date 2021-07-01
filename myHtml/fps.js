@@ -367,7 +367,7 @@ function loadTex(){
 						undefined)
 				}
 			);
-			createText(i.toString(),pictures.children[i].position ,new THREE.Vector3(0.5,0.5,0.5));
+			createText(i.toString()+"信息", pictures.children[i]);
 	}
 
 
@@ -376,11 +376,11 @@ function loadTex(){
 const fontLoader = new THREE.FontLoader();
 const textGroup = new THREE.Group();
 let textGeometry,textFont,textMesh;
-fontLoader.load( '../examples/fonts/helvetiker_regular.typeface.json',
+fontLoader.load( '../examples/fonts/FZKai-Z03S_Regular.json',
 	function ( font ) {
 	textFont = font;
 	} );
-function createText(texts,pos,scale){
+function createText(texts,obj){
 	textGeometry = new THREE.TextGeometry(texts,{
 		font: textFont,
 		size: 1,
@@ -391,11 +391,15 @@ function createText(texts,pos,scale){
 		bevelSize: 0.01,
 		bevelSegments: 1
 	});
-	textMesh = new THREE.Mesh( textGeometry, new THREE.MeshBasicMaterial( { color: 0x00ff33 } ) );
+	textMesh = new THREE.Mesh( textGeometry, new THREE.MeshBasicMaterial( { color: 0x333333 } ) );
 
-	textMesh.position.set(pos.x,pos.z,pos.y);
-	textMesh.scale.set(scale.x,scale.y,scale.z);
-	textGroup.add(textMesh);
+	//textMesh.position.set(pos.x,pos.z,pos.y);
+	//textMesh.scale.set(scale.x,scale.y,scale.z);
+	obj.attach(textMesh);
+	textMesh.position.set(-1.2,2.5,0);
+	textMesh.rotation.set(0,0,-1.5708);
+	textMesh.scale.set(0.1,.1,0.1);
+	//textGroup.add(textMesh); //成组，方便缩放大小
 
 
 }
