@@ -11,7 +11,7 @@ import { RGBELoader } from '../examples/jsm/loaders/RGBELoader.js';
 
 
 const clock = new THREE.Clock();
-
+let textGeometry,textFont,textMesh;
 const scene = new THREE.Scene();
 scene.background = new THREE.Color( 0x88ccff );//0x88ccff
 
@@ -79,7 +79,7 @@ stats.domElement.style.top = '0px';
 
 container.appendChild( stats.domElement );
 
-const STEPS_PER_FRAME = 10;
+const STEPS_PER_FRAME = 1;
 
 const worldOctree = new Octree();
 
@@ -93,6 +93,10 @@ let playerOnFloor = false;
 const keyStates = {};
 
 let camMove = false;
+
+const raycaster = new THREE.Raycaster();//射线
+const mouse = new THREE.Vector2();//鼠标位置
+let castRay = false;
 
 document.addEventListener( 'keydown', ( event ) => {
 
@@ -121,6 +125,8 @@ document.addEventListener( 'mouseup', () => {
 } );
 
 document.body.addEventListener( 'mousemove', ( event ) => {
+	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 	//if ( document.pointerLockElement === document.body ) {
 	if (camMove){
 		camera.rotation.y -= event.movementX / 500;
@@ -140,6 +146,14 @@ function onWindowResize() {
 
 document.addEventListener( 'click', () => {
 	camera.getWorldDirection( playerDirection );
+} );
+
+
+
+document.addEventListener( 'dblclick', () => {
+
+	castRay = true;
+
 } );
 
 function playerCollitions() {
@@ -294,7 +308,7 @@ function loadTex(){
 //创建字体fontLoader
 const fontLoader = new THREE.FontLoader();
 const textGroup = new THREE.Group();
-let textGeometry,textFont,textMesh;
+
 fontLoader.load( '../examples/fonts/FZKai-Z03S_Regular.json',
 	function ( font ) {
 	textFont = font;
@@ -311,9 +325,9 @@ function createText(texts,obj){
 		bevelSegments: 1
 	});
 	textMesh = new THREE.Mesh( textGeometry, new THREE.MeshStandardMaterial( {
-		color:0x495d69 ,
-		metalness:0.8 ,
-		roughness:0.1 ,
+		color : 0x495d69 ,
+		metalness :0.8 ,
+		roughness :0.1 ,
 		//wireframe:true,
 		} ) );
 
@@ -342,6 +356,7 @@ loader.load( 'scene.gltf', ( gltf ) => {
 
 			 child.castShadow = true;
 			 child.receiveShadow = true;
+			 console.log(child.name);
 
 
 			if ( child.material.map ) {
@@ -376,13 +391,25 @@ function animate() {
 
 	}
 
+	if (castRay){
+
+		raycast();
+
+	}
+
 	renderer.render( scene, camera );
 
 	stats.update();
 
 	requestAnimationFrame( animate );
 
-	info2.innerText = deltaTime;
+}
 
+function raycast(){
+
+	raycaster.setFromCamera(mouse,camera);
+	const intersects = raycaster.intersectObjects( scene.children,true);
+	info2.innerText = intersects[0].object.name;
+	castRay = false;
 }
 
