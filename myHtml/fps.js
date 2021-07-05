@@ -10,6 +10,7 @@ import { Capsule } from '../examples/jsm/math/Capsule.js';
 import { RGBELoader } from '../examples/jsm/loaders/RGBELoader.js';
 
 
+
 const clock = new THREE.Clock();
 let textGeometry,textFont,textMesh;
 const scene = new THREE.Scene();
@@ -356,7 +357,7 @@ loader.load( 'scene.gltf', ( gltf ) => {
 
 			 child.castShadow = true;
 			 child.receiveShadow = true;
-			 console.log(child.name);
+			 //console.log(child.name);
 
 
 			if ( child.material.map ) {
@@ -373,6 +374,11 @@ loader.load( 'scene.gltf', ( gltf ) => {
 	animate();
 	//createText("i");
 } );
+loader.load('FloorCollider.gltf',( collider ) =>{
+	scene.add( collider.scene );
+	collider.scene.scale.set(0.6,0.6,0.6);
+	collider.scene.getChildByName("FloorCollider").material = new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:0});
+})
 
 function animate() {
 
@@ -393,7 +399,7 @@ function animate() {
 
 	if (castRay){
 
-		raycast();
+		raycast('FloorCollider');
 
 	}
 
@@ -405,11 +411,19 @@ function animate() {
 
 }
 
-function raycast(){
+function raycast(ObjName){
 
 	raycaster.setFromCamera(mouse,camera);
-	const intersects = raycaster.intersectObjects( scene.children,true);
-	info2.innerText = intersects[0].object.name;
+	const intersects = raycaster.intersectObject( scene.getChildByName(ObjName),false);
+	const point = intersects[0].point;
+	info2.innerText = intersects[0].distance;
 	castRay = false;
+
+	playerCollider.set( new THREE.Vector3(point.x,0.35,point.z),new THREE.Vector3(point.x,1,point.z),playerCollider.radius);
+	console.log(point);
+
+	playerCollitions();
+
+	camera.position.copy( playerCollider.end );
 }
 
