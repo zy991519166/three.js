@@ -126,12 +126,13 @@ document.addEventListener( 'mouseup', () => {
 } );
 
 document.body.addEventListener( 'mousemove', ( event ) => {
+
 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 	//if ( document.pointerLockElement === document.body ) {
 	if (camMove){
-		camera.rotation.y -= event.movementX / 500;
-		camera.rotation.x -= event.movementY / 500;
+		camera.rotation.y += event.movementX / 500;
+		camera.rotation.x += event.movementY / 500;
 		// camera.rotation.y -= event.movementX / 500;
 		// camera.rotation.x -= event.movementY / 500;
 	}
@@ -156,7 +157,44 @@ document.addEventListener( 'dblclick', () => {
 	castRay = true;
 
 } );
+let  OldPosX,OldPosY,startX,startY,delta,now ;
+document.addEventListener( 'touchstart', (event) => {
+	info2.innerText = 'touchstart';
+	camMove = true;
+	if (event.touches.length === 1) {
+		const touch2 = event.touches[0];
+		mouse.x = (touch2.pageX / window.innerWidth) * 2 - 1;
+		mouse.y = -(touch2.pageY / window.innerHeight) * 2 + 1;
+		delta = Date.now() - now;
+		now = Date.now();
+		if (delta>0 && delta<250){
+			castRay = true;
+		}
+		OldPosX = touch2.pageX;
+		startX = touch2.pageX;
+		OldPosY = touch2.pageY;
+		startY =touch2.pageY;
+	}
+} );
+document.addEventListener( 'touchend', () => {
+	info2.innerText = 'touchend';
+	camMove = false;
+} );
 
+document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+
+function onDocumentTouchMove(e){
+	info2.innerText = 'touchmove';
+	const touch2 = e.changedTouches[0];
+	if (e.touches.length === 1) {
+		if (camMove){
+			camera.rotation.y += (touch2.clientX - OldPosX) * 0.005 ;
+			camera.rotation.x += (touch2.clientY - OldPosY) * 0.005 ;
+		}
+		OldPosX = touch2.clientX;
+		OldPosY = touch2.clientY;
+	}
+}
 function playerCollitions() {
 
 	const result = worldOctree.capsuleIntersect( playerCollider );
@@ -418,7 +456,7 @@ function raycast(ObjName){
 	castRay = false;
 	if (intersects.length > 0) {
 		const point = intersects[0].point;
-		info2.innerText = intersects[0].distance;
+		//info2.innerText = intersects[0].distance;
 		playerCollider.set(new THREE.Vector3(point.x, 0.35, point.z), new THREE.Vector3(point.x, 1, point.z), playerCollider.radius);
 		playerCollitions();
 		camera.position.copy(playerCollider.end);
