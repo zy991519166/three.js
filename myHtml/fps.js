@@ -415,15 +415,15 @@ function raycast(ObjName){
 
 	raycaster.setFromCamera(mouse,camera);
 	const intersects = raycaster.intersectObject( scene.getChildByName(ObjName),false);
-	const point = intersects[0].point;
-	info2.innerText = intersects[0].distance;
 	castRay = false;
-
-	playerCollider.set( new THREE.Vector3(point.x,0.35,point.z),new THREE.Vector3(point.x,1,point.z),playerCollider.radius);
-	console.log(point);
-
-	playerCollitions();
-
-	camera.position.copy( playerCollider.end );
+	if (intersects.length > 0) {
+		const point = intersects[0].point;
+		info2.innerText = intersects[0].distance;
+		playerCollider.set(new THREE.Vector3(point.x, 0.35, point.z), new THREE.Vector3(point.x, 1, point.z), playerCollider.radius);
+		playerCollitions();
+		camera.position.copy(playerCollider.end);
+	} else {
+		alert('点击地面移动');
+	}
 }
 
