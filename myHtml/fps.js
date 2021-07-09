@@ -8,7 +8,7 @@ import { Octree } from '../examples/jsm/math/Octree.js';
 import { Capsule } from '../examples/jsm/math/Capsule.js';
 
 import { RGBELoader } from '../examples/jsm/loaders/RGBELoader.js';
-
+import { TWEEN } from "../examples/jsm/libs/tween.module.min.js";
 
 
 const clock = new THREE.Clock();
@@ -440,7 +440,7 @@ function animate() {
 		raycast('FloorCollider');
 
 	}
-
+	TWEEN.update();
 	renderer.render( scene, camera );
 
 	stats.update();
@@ -457,11 +457,52 @@ function raycast(ObjName){
 	if (intersects.length > 0) {
 		const point = intersects[0].point;
 		//info2.innerText = intersects[0].distance;
-		playerCollider.set(new THREE.Vector3(point.x, 0.35, point.z), new THREE.Vector3(point.x, 1, point.z), playerCollider.radius);
+		movePlayer(playerCollider.start,point);
+		//playerCollider.set(new THREE.Vector3(point.x, 0.35, point.z), new THREE.Vector3(point.x, 1, point.z), playerCollider.radius);
 		playerCollitions();
 		camera.position.copy(playerCollider.end);
 	} else {
 		alert('点击地面移动');
 	}
+}
+
+function movePlayer(oldP, newP) {
+	let tween = new TWEEN.Tween({
+		x1: oldP.x,
+		y1: oldP.y,
+		z1: oldP.z,
+		// x2: oldT.x,
+		// y2: oldT.y,
+		// z2: oldT.z,
+	});
+	tween.to(
+		{
+			x1: newP.x,
+			y1: newP.y,
+			z1: newP.z,
+			// x2: newT.x,
+			// y2: newT.y,
+			// z2: newT.z,
+		},
+		2000
+	);
+
+	// 每一帧执行函数 、这个地方就是核心了、每变一帧跟新一次页面元素
+	tween.onUpdate((object) => {
+		playerCollider.set(new THREE.Vector3(object.x1, playerCollider.start.y, object.z1), new THREE.Vector3(object.x1, playerCollider.end.y, object.z1), playerCollider.radius);
+	});
+
+	// 动画完成后的执行函数
+	tween.onComplete(() => {
+		tweenCallBack();
+	});
+
+	tween.easing(TWEEN.Easing.Cubic.InOut);
+	// 这个函数必须有、这个是启动函数、不加不能启动
+	tween.start();
+}
+
+function tweenCallBack() {
+	console.log(playerCollider);
 }
 
