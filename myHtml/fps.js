@@ -437,7 +437,7 @@ function animate() {
 
 	if (castRay){
 
-		raycast('FloorCollider');
+		raycast();
 
 	}
 	TWEEN.update();
@@ -449,12 +449,13 @@ function animate() {
 
 }
 
-function raycast(ObjName){
+function raycast(){
 
 	raycaster.setFromCamera(mouse,camera);
-	const intersects = raycaster.intersectObject( scene.getChildByName(ObjName),false);
+	const intersects = raycaster.intersectObjects( scene.children ,true);
 	castRay = false;
-	if (intersects.length > 0) {
+	if (intersects.length > 0 && intersects[0].object.name=='FloorCollider') {
+
 		const point = intersects[0].point;
 		//info2.innerText = intersects[0].distance;
 		movePlayer(playerCollider.start,point);
