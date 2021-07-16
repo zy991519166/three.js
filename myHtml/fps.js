@@ -131,8 +131,8 @@ document.body.addEventListener( 'mousemove', ( event ) => {
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 	//if ( document.pointerLockElement === document.body ) {
 	if (camMove){
-		camera.rotation.y += event.movementX / 500;
-		camera.rotation.x += event.movementY / 500;
+		camera.rotation.y -= event.movementX / 500;
+		camera.rotation.x -= event.movementY / 500;
 		// camera.rotation.y -= event.movementX / 500;
 		// camera.rotation.x -= event.movementY / 500;
 	}
@@ -339,7 +339,8 @@ function loadTex(){
 						undefined)
 				}
 			);
-			createText(i.toString()+"信息", pictures.children[i]);
+			createText(i.toString()+"...", pictures.children[i]);
+
 	}
 
 
@@ -347,6 +348,18 @@ function loadTex(){
 //创建字体fontLoader
 const fontLoader = new THREE.FontLoader();
 const textGroup = new THREE.Group();
+
+function createSprite(point){
+	const map = new THREE.TextureLoader().load( '../examples/textures/sprite.png' );
+	const sprite1 = new THREE.Sprite( new THREE.SpriteMaterial( { map: map, sizeAttenuation: false } ) );
+	scene.add( sprite1 );
+	sprite1.position.set( point.x,point.y,point.z );
+	sprite1.center.set( 0, 0 );
+	sprite1.scale.set( .1, .1, .1 );
+
+
+}
+
 
 fontLoader.load( '../examples/fonts/FZKai-Z03S_Regular.json',
 	function ( font ) {
@@ -462,8 +475,11 @@ function raycast(){
 		//playerCollider.set(new THREE.Vector3(point.x, 0.35, point.z), new THREE.Vector3(point.x, 1, point.z), playerCollider.radius);
 		playerCollitions();
 		camera.position.copy(playerCollider.end);
+
 	} else {
-		alert('点击地面移动');
+		//createSprite(intersects[0].point);
+		//alert('点击地面移动');
+		info2.innerText = "当前点击"+ intersects[0].object.name +",点击地面移动";
 	}
 }
 
