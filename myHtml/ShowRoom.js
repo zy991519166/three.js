@@ -99,6 +99,10 @@ const raycaster = new THREE.Raycaster();//射线
 const mouse = new THREE.Vector2();//鼠标位置
 let castRay = false;
 
+let video,videoTexture,videoMaterial;
+
+
+
 document.addEventListener( 'keydown', ( event ) => {
 
 	keyStates[ event.code ] = true;
@@ -294,6 +298,8 @@ function controls( deltaTime ) {
 	}
 
 }
+
+
 //加载贴图
 let texture = new THREE.TextureLoader();
 
@@ -304,7 +310,7 @@ function loadTex(){
 
 	const picCount = pictures.children.length;
 	//正常运行
-	for (let i = 0 ; i < picCount ; i ++ ){
+	for (let i = 1 ; i < picCount ; i ++ ){
 
 			texture.load(
 				'textures/'+(i+1).toString()+'.png',
@@ -348,6 +354,11 @@ function loadTex(){
 
 
 }
+
+
+
+
+
 //创建字体fontLoader
 const fontLoader = new THREE.FontLoader();
 const textGroup = new THREE.Group();
@@ -399,7 +410,7 @@ scene.add(textGroup);
 const loader = new GLTFLoader().setPath( './showroom/' );
 
 loader.load( 'scene.glb', ( gltf ) => {
-
+	init();
 	scene.add( gltf.scene );
 	gltf.scene.scale.set(0.08,0.08,0.08);
 
@@ -411,20 +422,37 @@ loader.load( 'scene.glb', ( gltf ) => {
 		if ( child.isMesh ) {
 			 //child.castShadow = true;
 			 //child.receiveShadow = true;
-			console.log(child.name);
-			console.log(child.material);
+//--------------------------------------------------视频贴图----------------------------------------------------------------
+			 if (child.name == 'Pics1'){
+				 	child.material = videoMaterial;
+			}
+
 			child.material.lightMap = lightMap;
 			child.material.lightMap.anisotropy = 4;
-			//child.material.aoMap = lightMap;
 			}
 
 
 	} );
 
 	loadTex();
+
 	animate();
 
 } );
+
+function init(){
+	const startButton = document.getElementById( 'startButton' );
+	video = document.getElementById( 'video' );
+	startButton.addEventListener( 'click', function () {
+		const overlay = document.getElementById( 'overlay' );
+		overlay.remove();
+
+		video.play();
+
+	} );
+	videoTexture = new THREE.VideoTexture( video );
+	videoMaterial = new THREE.MeshStandardMaterial({ color:0xffffff, map: videoTexture });
+}
 
 function animate() {
 
@@ -517,4 +545,3 @@ function movePlayer(oldP, newP) {
 function tweenCallBack() {
 	console.log(playerCollider);
 }
-

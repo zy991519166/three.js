@@ -5,8 +5,17 @@
 	<style>
 		body { margin: 0; }
 	</style>
+	<link type="text/css" rel="stylesheet" href="main.css">
 </head>
 <body>
+<div id="overlay">
+	<button id="startButton">Play</button>
+</div>
+<div id="container"></div>
+<video id="video" loop autoplay crossOrigin="anonymous" playsinline style="display:none">
+	<source src="../examples/textures/sintel.ogv" type='video/ogg; codecs="theora, vorbis"'>
+	<source src="../examples/textures/sintel.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+</video></body>
 <script src="../build/three.js"></script>
 <script>
 	const scene = new THREE.Scene();
@@ -17,8 +26,19 @@
 	document.body.appendChild( renderer.domElement );
 
 	const geometry = new THREE.SphereGeometry(4,18,12);
-	let myColor = new THREE.Color(Math.random(0,255),Math.random(0,255),Math.random(0,255) );
-	const material = new THREE.MeshLambertMaterial( {  emissive: myColor ,wireframe: true} );
+	let myColor = new THREE.Color(1,1,1);
+	const startButton = document.getElementById( 'startButton' );
+	startButton.addEventListener( 'click', function () {
+		const overlay = document.getElementById( 'overlay' );
+		overlay.remove();
+		let video = document.getElementById( 'video' );
+		video.play();
+
+	} );
+
+	const texture = new THREE.VideoTexture( video );
+	// let myColor = new THREE.Color(Math.random(0.9,1),Math.random(0.9,1),Math.random(0.9,1) );
+	const material = new THREE.MeshLambertMaterial( {  emissive: texture ,wireframe: false} );
 
 	const cube = new THREE.Mesh( geometry, material );
 	scene.add( cube );
