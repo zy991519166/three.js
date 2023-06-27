@@ -23,8 +23,6 @@ class Skeleton {
 		this.boneTexture = null;
 		this.boneTextureSize = 0;
 
-		this.frame = - 1;
-
 		this.init();
 
 	}
@@ -178,6 +176,7 @@ class Skeleton {
 		boneMatrices.set( this.boneMatrices ); // copy current values
 
 		const boneTexture = new DataTexture( boneMatrices, size, size, RGBAFormat, FloatType );
+		boneTexture.needsUpdate = true;
 
 		this.boneMatrices = boneMatrices;
 		this.boneTexture = boneTexture;
@@ -248,7 +247,7 @@ class Skeleton {
 
 		const data = {
 			metadata: {
-				version: 4.5,
+				version: 4.6,
 				type: 'Skeleton',
 				generator: 'Skeleton.toJSON'
 			},
